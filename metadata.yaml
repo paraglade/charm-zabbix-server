@@ -1,0 +1,8 @@
+name: zabbix-server 
+summary: "Zabbix Server"
+maintainer: "Nelson Roberts <nelson.roberts@pearson.com>"
+description: |
+    Installs Zabbix Server
+requires:
+  db:
+    interface: mysql

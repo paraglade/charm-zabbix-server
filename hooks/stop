@@ -1,0 +1,9 @@
+#!/bin/bash -x
+juju-log "running stop hook"
+
+service apache2 stop
+
+/usr/local/sbin/zabbix_java/shutdown
+pkill -9 zabbix_server
+
+exit 0

@@ -1,0 +1,8 @@
+#!/bin/bash -eux
+
+juju-log "running restart hook"
+
+hooksdir="$PWD/hooks"
+
+${hooksdir}/stop
+${hooksdir}/start

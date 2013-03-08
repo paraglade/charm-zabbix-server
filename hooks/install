@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -eu # -x for verbose logging to juju debug-log
+juju-log "Starting install of Zabbix Server"
+
+hooksdir=${PWD}/hooks
+srcdir=${PWD}/src
+
+add-apt-repository ppa:charmers/charm-helpers > /dev/null
+apt-get -qq update && apt-get -qq -y upgrade > /dev/null
+
+apt-get -qq -y install php5-memcache mysql-client pwgen php5 php5-fpm php-apc mailutils php-mail sysstat php5-mysql php5-mcrypt php5-memcache charm-helper-sh php5-curl rsync nfs-common git-core mktemp libmysqlclient-dev libcurl4-openssl-dev libsnmp-base libsnmp-dev php5 libiksemel3 libiksemel-dev libssh2-1 libssh2-1-dev libopenipmi-dev default-jdk libsqlite3-dev php5-sqlite php5-mysql php5-gd make apache2 apache2-suexec libapache2-mod-php5 > /dev/null
+
+juju-log "setup zabbix user and group"
+if [ "$(grep -c zabbix /etc/group)" -lt "1" ] ; then
+  groupadd -f zabbix
+fi
+
+if [ "$(grep -c zabbix /etc/passwd)" -lt "1" ] ; then
+  useradd -m -g zabbix zabbix
+fi
+
+juju-log "extract zabbix source"
+mkdir -p /tmp/zabbix-src
+cd /tmp/zabbix-src
+
+tar zxf ${srcdir}/zabbix-2.0.5.tar.gz
+cd zabbix-2.0.5
+
+juju-log "configure zabbix source"
+./configure --enable-server --enable-proxy --enable-agent --with-mysql --enable-ipv6 --with-net-snmp --with-libcurl --enable-java --with-ssh2 --with-openipmi --with-ldap --with-jabber > /dev/null
+
+juju-log "make zabbix source"
+make install > /dev/null
+
+juju-log  "install and configure zabbix frontend"
+mkdir -p /var/www/zabbix
+cd frontends/php
+cp -a . /var/www/zabbix
+cp ${srcdir}/zabbix.conf.php /var/www/zabbix/conf
+chown -R www-data.www-data /var/www/zabbix
+
+sed -i 's/post_max_size = .*/post_max_size = 16m/g' /etc/php5/apache2/php.ini
+sed -i 's/max_execution_time = .*/max_execution_time = 300/g' /etc/php5/apache2/php.ini
+sed -i 's/max_input_time = .*/max_input_time = 300/g' /etc/php5/apache2/php.ini
+sed -i 's/;date.timezone.*/date.timezone = America\/New_York/g' /etc/php5/apache2/php.ini

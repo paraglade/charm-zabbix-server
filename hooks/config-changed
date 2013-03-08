@@ -1,0 +1,54 @@
+#!/bin/bash
+set -eux # -x for verbose logging to juju debug-log
+
+juju-log "starting config-changed hook"
+
+hooksdir="$PWD/hooks"
+
+user=`relation-get user`
+password=`relation-get password`
+host=`relation-get private-address`
+database=`relation-get database`
+server_name=`config-get server-name`
+node_id=`config-get node-id`
+
+if [ -z "$database" ] ; then
+  exit 0
+fi
+
+
+juju-log "setup zabbix config"
+
+zabbix_conf_php="/var/www/zabbix/conf/zabbix.conf.php"
+zabbix_server_conf="/usr/local/etc/zabbix_server.conf"
+
+cp src/zabbix.conf.php ${zabbix_conf_php}
+
+sed -i "s|DB_SERVER|${host}|g" ${zabbix_conf_php}
+sed -i "s|DB_NAME|${database}|g" ${zabbix_conf_php}
+sed -i "s|DB_USER|${user}|g" ${zabbix_conf_php}
+sed -i "s|DB_PASSWORD|${password}|g" ${zabbix_conf_php}
+sed -i "s|ZABBIX_SERVER_NAME|${server_name}|g" ${zabbix_conf_php}
+
+mkdir -p /var/log/zabbix
+mkdir -p /var/run/zabbix
+
+chown zabbix.zabbix /var/log/zabbix
+chown zabbix.zabbix /var/run/zabbix
+
+cp ${zabbix_server_conf} ${zabbix_server_conf}.orig
+
+sed -i "s|.*NodeID=.*|NodeID=${node_id}|g" ${zabbix_server_conf}
+sed -i "s|.*LogFile=.*log|LogFile=/var/log/zabbix/zabbix_server.log|g" ${zabbix_server_conf}
+sed -i "s|*.PidFile=.*pid|PidFile=/var/run/zabbix/zabbix_server.pid|g" ${zabbix_server_conf}
+sed -i "s|.*DBHost=.*|DBHost=${host}|g" ${zabbix_server_conf}
+sed -i "s|.*DBName=zabbix.*|DBName=${database}|g" ${zabbix_server_conf}
+sed -i "s|.*DBUser=root.*|DBUser=${user}|g" ${zabbix_server_conf}
+sed -i "s|.*DBPassword=.*|DBPassword=${password}|g" ${zabbix_server_conf}
+sed -i "s|.*StartTrappers=.*|StartTrappers=5|g" ${zabbix_server_conf}
+sed -i "s|.*JavaGateway=.*|JavaGateway=1|g" ${zabbix_server_conf}
+sed -i "s|.*StartJavaPollers=.*|StartJavaPollers=5|g" ${zabbix_server_conf}
+
+
+juju-log "restart services"
+${hooksdir}/restart

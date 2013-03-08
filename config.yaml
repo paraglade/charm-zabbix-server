@@ -1,0 +1,9 @@
+options:
+  server-name:
+    type: string
+    default: zabbix-server
+    description: Name of the Zabbix server
+  node-id:
+    type: int
+    default: 0
+    description:  Node id.  Must be unique for all of the servers in the distrubited network
