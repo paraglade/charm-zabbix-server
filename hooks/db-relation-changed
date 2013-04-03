@@ -3,6 +3,8 @@ set -eux # -x for verbose logging to juju debug-log
 
 hooksdir="$PWD/hooks"
 
+zabbix_src="/tmp/zabbix-src/zabbix-2.0.5"
+
 user=`relation-get user`
 password=`relation-get password`
 host=`relation-get private-address`
@@ -16,19 +18,18 @@ fi
 mysql_exec="mysql -h${host} -u${user} -p${password} ${database}"
 
 if ${mysql_exec} -e "SELECT 1 FROM maintenances LIMIT 0" ; then
-	juju-log -l INFO "zabbix database already setup. skipping schema setup"
+  juju-log -l INFO "zabbix database already setup. skipping schema setup"
 else
-	juju-log "setup zabbix database"
-  cd /tmp/zabbix-src/zabbix-2.0.5
+  juju-log "setup zabbix database"
 
   juju-log "applying database schema"
-  ${mysql_exec} < database/mysql/schema.sql
+  ${mysql_exec} < ${zabbix_src}/database/mysql/schema.sql
 
   juju-log "applying images schema"
-  ${mysql_exec} < database/mysql/images.sql
+  ${mysql_exec} < ${zabbix_src}/database/mysql/images.sql
 
   juju-log "applying data schema"
-  ${mysql_exec} < database/mysql/data.sql
+  ${mysql_exec} < ${zabbix_src}/database/mysql/data.sql
 fi
 
 ${hooksdir}/config-changed

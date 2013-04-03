@@ -3,6 +3,10 @@ summary: "Zabbix Server"
 maintainer: "Nelson Roberts <nelson.roberts@pearson.com>"
 description: |
     Installs Zabbix Server
+provides:
+  zabbix:
+    interface: server
 requires:
   db:
     interface: mysql
+

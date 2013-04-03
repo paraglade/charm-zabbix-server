@@ -3,7 +3,8 @@ set -eux # -x for verbose logging to juju debug-log
 
 juju-log "starting config-changed hook"
 
-hooksdir="$PWD/hooks"
+charmdir="$PWD"
+hooksdir="${charmdir}/hooks"
 
 user=`relation-get user`
 password=`relation-get password`
@@ -22,7 +23,7 @@ juju-log "setup zabbix config"
 zabbix_conf_php="/var/www/zabbix/conf/zabbix.conf.php"
 zabbix_server_conf="/usr/local/etc/zabbix_server.conf"
 
-cp src/zabbix.conf.php ${zabbix_conf_php}
+cp ${charmdir}/src/zabbix.conf.php ${zabbix_conf_php}
 
 sed -i "s|DB_SERVER|${host}|g" ${zabbix_conf_php}
 sed -i "s|DB_NAME|${database}|g" ${zabbix_conf_php}
