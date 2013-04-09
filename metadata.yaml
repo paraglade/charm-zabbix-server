@@ -4,8 +4,8 @@ maintainer: "Nelson Roberts <nelson.roberts@pearson.com>"
 description: |
     Installs Zabbix Server
 provides:
-  zabbix:
-    interface: server
+  monitoring:
+    interface: zabbix-server
 requires:
   db:
     interface: mysql

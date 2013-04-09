@@ -41,10 +41,10 @@ cp ${zabbix_server_conf} ${zabbix_server_conf}.orig
 
 sed -i "s|.*NodeID=.*|NodeID=${node_id}|g" ${zabbix_server_conf}
 sed -i "s|.*LogFile=.*log|LogFile=/var/log/zabbix/zabbix_server.log|g" ${zabbix_server_conf}
-sed -i "s|*.PidFile=.*pid|PidFile=/var/run/zabbix/zabbix_server.pid|g" ${zabbix_server_conf}
+sed -i "s|.*PidFile=.*pid|PidFile=/var/run/zabbix/zabbix_server.pid|g" ${zabbix_server_conf}
 sed -i "s|.*DBHost=.*|DBHost=${host}|g" ${zabbix_server_conf}
-sed -i "s|.*DBName=zabbix.*|DBName=${database}|g" ${zabbix_server_conf}
-sed -i "s|.*DBUser=root.*|DBUser=${user}|g" ${zabbix_server_conf}
+sed -i "s|.*DBName=.*|DBName=${database}|g" ${zabbix_server_conf}
+sed -i "s|.*DBUser=.*|DBUser=${user}|g" ${zabbix_server_conf}
 sed -i "s|.*DBPassword=.*|DBPassword=${password}|g" ${zabbix_server_conf}
 sed -i "s|.*StartTrappers=.*|StartTrappers=5|g" ${zabbix_server_conf}
 sed -i "s|.*JavaGateway=.*|JavaGateway=1|g" ${zabbix_server_conf}

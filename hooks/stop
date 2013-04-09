@@ -3,7 +3,10 @@ juju-log "running stop hook"
 
 service apache2 stop
 
-/usr/local/sbin/zabbix_java/shutdown
+#/usr/local/sbin/zabbix_java/shutdown.sh
+pkill -9 com.zabbix.gateway.JavaGateway
+rm -f /tmp/zabbix_java.pid
+
 pkill -9 zabbix_server
 
 exit 0

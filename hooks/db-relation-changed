@@ -35,3 +35,6 @@ fi
 ${hooksdir}/config-changed
 
 open-port 80/tcp
+open-port 10050/tcp
+open-port 10051/tcp
+open-port 10052/tcp
