@@ -28,7 +28,8 @@ tar zxf ${srcdir}/zabbix-2.0.5.tar.gz
 cd zabbix-2.0.5
 
 juju-log "configure zabbix source"
-./configure --enable-server --enable-proxy --enable-agent --with-mysql --enable-ipv6 --with-net-snmp --with-libcurl --enable-java --with-ssh2 --with-openipmi --with-ldap --with-jabber > /dev/null
+#./configure --enable-server --enable-proxy --enable-agent --with-mysql --enable-ipv6 --with-net-snmp --with-libcurl --enable-java --with-ssh2 --with-openipmi --with-ldap --with-jabber > /dev/null
+./configure --enable-server --with-mysql --enable-ipv6 --with-net-snmp --with-libcurl --enable-java --with-ssh2 --with-openipmi --with-ldap --with-jabber > /dev/null
 
 juju-log "make zabbix source"
 make install > /dev/null

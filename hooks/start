@@ -1,13 +1,13 @@
 #!/bin/bash -eux
 juju-log "running start hook"
 
-database=`relation-get database`
-
-if [ -z "$database" ] ; then
-  juju-log "database relation not setup skipping service start"
-  exit 0
-fi
-
 service apache2 start
 su zabbix -c /usr/local/sbin/zabbix_server
 su zabbix -c /usr/local/sbin/zabbix_java/startup.sh
+
+open-port 80/tcp
+open-port 10051/tcp
+open-port 10051/udp
+open-port 10052/tcp
+open-port 10052/udp
+
